@@ -71,7 +71,7 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 ## Install Locally
 <ol>
-    <li>Clone GitHub repo for this project locally <code>git clone https://github.com/tarikmanoar/KajKi</code> </li>
+    <li>Clone GitHub repo for this project locally <code>git clone https://github.com/tarikmanoar/todolist</code> </li>
     <li>Extract project in local server</li>
     <li>Install Composer Dependencies <code><b>composer install</b></code></li>
     <li>Install NPM Dependencies <code><b>npm install</b></code></li>
