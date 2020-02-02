@@ -19,3 +19,4 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::resource('todo', 'TodoController');
+Route::get('varification/{token}', 'HomeController@verify' )->name('varification');

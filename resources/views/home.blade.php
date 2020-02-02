@@ -33,15 +33,10 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        @php
-                        $c=0;
-                        @endphp
+                        <tbody>
                         @foreach ($todos as $item)
-                        @php
-                        $c++;
-                        @endphp
                         <tr>
-                            <td>{{$c}} </td>
+                            <td>{{$item->id}} </td>
                             <td>{{$item->user->name}} </td>
                             <td>{{$item->name}} </td>
                             <td>{{$item->phone}} </td>
@@ -61,7 +56,7 @@
                             </td>
                         </tr>
                         @endforeach
-                        <tbody>
+                        {{$todos->links()}}
                         </tbody>
                     </table>
                 </div>

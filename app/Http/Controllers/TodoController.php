@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Todo;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 
@@ -41,27 +43,29 @@ class TodoController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|string|max:50',
-            'phone' => 'required|numeric|min:11|unique:todos',
-            'email' => 'required|email|string|unique:todos',
+            'name'    => 'required|string|max:50',
+            'phone'   => 'required|numeric|min:11|unique:todos',
+            'email'   => 'required|email|string|unique:todos',
             'address' => 'required|string',
-            'age' => 'required|numeric',
-            'avater' => 'required|image|max:2048',
+            'age'     => 'required|numeric',
+            'avater'  => 'required|image|max:2048',
         ]);
-        $avater = $request->file('avater');
+        $avater  = $request->file('avater');
         $user_id = auth()->user()->id;
         $fileNew = 'Avater_' . Str::random(5) . '.' . $avater->getClientOriginalExtension();
         // $avater->storeAs('Images',$fileNew);
-        Image::make($avater)->resize(300, null, function ($constraint) {$constraint->aspectRatio();})->save('Uploads/Images/' . $fileNew);
+        Image::make($avater)->resize(300, null, function ($constraint) {
+            $constraint->aspectRatio();
+        })->save('Uploads/Images/' . $fileNew);
 
         $data = [
             'user_id' => $user_id,
-            'name' => $request->get('name'),
-            'phone' => $request->get('phone'),
-            'email' => $request->get('email'),
+            'name'    => $request->get('name'),
+            'phone'   => $request->get('phone'),
+            'email'   => $request->get('email'),
             'address' => $request->get('address'),
-            'age' => $request->get('age'),
-            'image' => 'Uploads/Images/' . $fileNew,
+            'age'     => $request->get('age'),
+            'image'   => 'Uploads/Images/' . $fileNew,
         ];
         Todo::create($data);
         $this->setSuccessMsg('Person Insert Successful!');
@@ -100,30 +104,40 @@ class TodoController extends Controller
     public function update(Request $request, Todo $todo)
     {
         $this->validate($request, [
-            'name' => 'required|string|max:50',
-            'phone' => 'required|numeric|min:11|unique:todos',
-            'email' => 'required|email|string|unique:todos',
+            'name'    => 'required|string|max:50',
+            'phone'   => 'required|numeric|min:11|unique:todos,phone,' . $todo->id.',id',
+            'email'   => 'required|email|string|unique:todos,email,' . $todo->id.',id',
             'address' => 'required|string',
-            'age' => 'required|numeric',
+            'age'     => 'required|numeric',
         ]);
-        $avater = $request->file('avater');
         $user_id = auth()->user()->id;
-        $fileNew = 'Avater_' . Str::random(5) . '.' . $avater->getClientOriginalExtension();
-        // $avater->storeAs('Images',$fileNew);
-        Image::make($avater)->resize(300, null, function ($constraint) {$constraint->aspectRatio();})->save('Uploads/Images/' . $fileNew);
+        if ($request->hasFile('avater')) {
+            if ($request->file('avater')->isValid()) {
+                File::delete($todo->image);
+                $avater = $request->file('avater');
+                $fileNew = 'Avater_' . Str::random(5) . '.' . $avater->getClientOriginalExtension();
+                // $avater->storeAs('Images',$fileNew);
+                Image::make($avater)->resize(300, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save('Uploads/Images/' . $fileNew);
+                $fileNew = 'Uploads/Images/' . $fileNew;
+            }
+        } else {
+            $fileNew = $todo->image;
+        }
 
         $data = [
             'user_id' => $user_id,
-            'name' => $request->get('name'),
-            'phone' => $request->get('phone'),
-            'email' => $request->get('email'),
+            'name'    => $request->get('name'),
+            'phone'   => $request->get('phone'),
+            'email'   => $request->get('email'),
             'address' => $request->get('address'),
-            'age' => $request->get('age'),
-            'image' => 'Uploads/Images/' . $fileNew,
+            'age'     => $request->get('age'),
+            'image'   => $fileNew,
         ];
-        Todo::create($data);
+        $todo->update($data);
         $this->setSuccessMsg('Person Insert Successful!');
-        return redirect()->back();
+        return redirect()->route('todo.index');
     }
 
     /**
@@ -134,6 +148,11 @@ class TodoController extends Controller
      */
     public function destroy(Todo $todo)
     {
+        if ($todo->image) {
+            //    Storage::delete($todo->image);
+            File::delete($todo->image);
+            // return $todo->image ;
+        }
         $todo->delete();
         $this->setSuccessMsg('Person Delete Success!');
         return redirect()->back();

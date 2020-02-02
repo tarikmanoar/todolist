@@ -101,6 +101,7 @@
                             <button type="submit" class="btn btn-primary">
                                 {{ __('Update') }}
                             </button>
+                            <a href="{{route('todo.index')}} " class="btn btn-info">Go Back</a>
                         </div>
                     </div>
                 </form>
