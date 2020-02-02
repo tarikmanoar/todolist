@@ -73,7 +73,10 @@ class RegisterController extends Controller
             'remember_token' => Str::random(32),
             'password' => Hash::make($data['password']),
         ]);
+
         Mail::to($user['email'])->send(new VarificationUser($user));
+
+        // Mail::to($user['email'])->queue(new VarificationUser($user));
         return $user;
     }
 }
