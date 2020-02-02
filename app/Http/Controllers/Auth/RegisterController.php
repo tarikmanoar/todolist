@@ -67,12 +67,13 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return $user = User::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'remember_token' => Str::random(32),
             'password' => Hash::make($data['password']),
         ]);
-        Mail::to($user->email)->send(new VarificationUser($user));
+        Mail::to($user['email'])->send(new VarificationUser($user));
+        return $user;
     }
 }
