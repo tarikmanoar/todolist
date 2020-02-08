@@ -12,6 +12,10 @@ use Intervention\Image\Facades\Image;
 
 class TodoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('admin');
+    }
     /**
      * Display a listing of the resource.
      *

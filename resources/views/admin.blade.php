@@ -71,7 +71,16 @@
         @if (Route::has('login'))
         <div class="top-right links">
             @auth
-            {{-- <a href="{{ route('todo.index') }}">Home</a> --}}
+            <a href="{{ route('todo.index') }}">Home</a>
+            <a href="{{ route('post.index') }}">Post</a>
+            <a class="dropdown-item" href="{{ route('logout') }}"
+                onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                {{ __('Logout') }}
+            </a>
+
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
             @else
             <a href="{{ route('login') }}">Login</a>
 
@@ -84,9 +93,9 @@
 
         <div class="content">
             <div class="title m-b-md">
-                WELCOME <br> @auth {{Auth::user()->role}} @endauth
+                DASHBOARD <br> @auth {{Auth::user()->role}} @endauth
             </div>
-            
+
         </div>
     </div>
 </body>
