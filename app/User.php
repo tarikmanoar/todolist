@@ -40,5 +40,8 @@ class User extends Authenticatable
         
     public function todos(){
         return $this->hasMany(Todo::class);
+    }  
+    public function posts(){
+        return $this->hasMany(Post::class);
     }
 }
